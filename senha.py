@@ -13,8 +13,8 @@ def gerar_sigla(frase):
     for palavra in palavras:
         if palavra.lower() not in ignorar:
             sigla += palavra[0]
-
-    return sigla.upper()
+    sigla_res = sigla.upper()
+    return sigla_res
 
 
 def gerar_password(sigla):
