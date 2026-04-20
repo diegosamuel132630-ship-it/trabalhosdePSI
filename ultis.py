@@ -2,25 +2,39 @@ paises = {
     "Portugal": {"soldados": []},
     "Brasil": {"soldados": []},
     "EUA": {"soldados": []},
-    "França": {"soldados": []},
-    "Alemanha": {"soldados": []}
+    "Espanha": {"soldados": []},
+    "Itália": {"soldados": []},
+    "Reino Unido": {"soldados": []},
+    "Canadá": {"soldados": []},
+    "México": {"soldados": []},
+    "Argentina": {"soldados": []},
+    "China": {"soldados": []},
+    "Japão": {"soldados": []},
+    "Coreia do Sul": {"soldados": []},
+    "Rússia": {"soldados": []},
+    "Austrália": {"soldados": []},
+    "África do Sul": {"soldados": []},
+    "Turquia": {"soldados": []},
+    "Egito": {"soldados": []}
 }
+
 
 def input_int(mensagem):
     while True:
+        valor = input(mensagem)
         try:
-            return int(input(mensagem))
+            return int(valor)
         except:
-            print(" Digite um número válido!")
+            print("Digite um número válido!")
 
 
 def validar_nome(nome):
-    return bool(nome.strip())
+    return isinstance(nome, str) and nome.strip() != ""
 
 
 def validar_idade(idade):
-    return idade > 0
+    return isinstance(idade, int) and idade > 0
 
 
 def validar_texto(texto):
-    return bool(texto.strip())
+    return isinstance(texto, str) and texto.strip() != ""
