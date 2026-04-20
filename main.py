@@ -1,18 +1,13 @@
-from soldados import (
-    criar_soldado,
-    listar_soldados,
-    editar_soldado,
-    apagar_soldado,
-    buscar_soldado_por_id
-)
+from soldados import *
 from utils import input_int, paises
+from ministerio_defesa import *
 
 
 def mostrar_resposta(code, data):
     if code in (200, 201):
-        print(" Sucesso:")
+        print(f"\nSucesso ({code})")
     else:
-        print(" Erro:")
+        print(f"\nErro ({code})")
 
     if isinstance(data, dict):
         for k, v in data.items():
@@ -28,20 +23,19 @@ def mostrar_resposta(code, data):
 
 
 def main():
-
     while True:
-        print("\n===== SISTEMA DE CADASTRO =====")
+        print("\n===== SISTEMA =====")
         print("1. Criar soldado")
         print("2. Listar soldados")
         print("3. Editar soldado")
         print("4. Apagar soldado")
-        print("5. Buscar soldado por ID")
+        print("5. Buscar soldado")
+        print("6. Ministério da Defesa")
         print("0. Sair")
 
         op = input("Escolha: ")
 
         if op == "0":
-            print("Encerrando sistema...")
             break
 
         elif op == "1":
@@ -52,38 +46,88 @@ def main():
             print("Países:", list(paises.keys()))
             pais = input("País: ")
 
-            code, data = criar_soldado(nome, idade, patente, pais)
-            mostrar_resposta(code, data)
+            if pais not in paises:
+                print("País inválido!")
+                continue
+
+            print(*criar_soldado(nome, idade, patente, pais))
 
         elif op == "2":
-            code, data = listar_soldados()
-            mostrar_resposta(code, data)
+            print(*listar_soldados())
 
         elif op == "3":
-            idx = input_int("ID: ")
+            sid = input_int("ID: ")
 
-            nome = input("Novo nome (enter para manter): ") or None
+            nome = input("Novo nome: ") or None
 
-            idade_txt = input("Nova idade (enter para manter): ")
-            idade = int(idade_txt) if idade_txt else None
+            idade_txt = input("Nova idade: ")
+            if idade_txt:
+                try:
+                    idade = int(idade_txt)
+                except:
+                    print("Idade inválida!")
+                    continue
+            else:
+                idade = None
 
-            patente = input("Nova patente (enter para manter): ") or None
+            patente = input("Nova patente: ") or None
 
-            code, data = editar_soldado(idx, nome, idade, patente)
-            mostrar_resposta(code, data)
+            print(*editar_soldado(sid, nome, idade, patente))
 
         elif op == "4":
-            idx = input_int("ID: ")
-            code, data = apagar_soldado(idx)
-            mostrar_resposta(code, data)
+            sid = input_int("ID: ")
+            print(*apagar_soldado(sid))
 
         elif op == "5":
-            idx = input_int("ID: ")
-            code, data = buscar_soldado_por_id(idx)
-            mostrar_resposta(code, data)
+            sid = input_int("ID: ")
+            print(*buscar_soldado_por_id(sid))
+
+        elif op == "6":
+            while True:
+                print("\n=== MINISTÉRIO ===")
+                print("1. Relatório")
+                print("2. Transferir soldado")
+                print("3. Criar missão")
+                print("4. Listar missões")
+                print("5. Ranking")
+                print("0. Voltar")
+
+                sub = input("Escolha: ")
+
+                if sub == "0":
+                    break
+
+                elif sub == "1":
+                    print(*relatorio_geral())
+
+                elif sub == "2":
+                    sid = input_int("ID: ")
+                    print("Países:", list(paises.keys()))
+                    pais = input("Novo país: ")
+
+                    print(*transferir_soldado(sid, pais))
+
+                elif sub == "3":
+                    nome = input("Nome missão: ")
+                    print("Países:", list(paises.keys()))
+                    pais = input("País: ")
+
+                    ids = input("IDs (1,2,3): ")
+                    lista = [int(x) for x in ids.split(",") if x.strip()]
+
+                    print(*criar_missao(nome, pais, lista))
+
+                elif sub == "4":
+                    print(*listar_missoes())
+
+                elif sub == "5":
+                    print(*ranking_paises())
+
+                else:
+                    print("Opção inválida")
 
         else:
-            print(" Opção inválida")
+            print("Opção inválida")
 
 
 if __name__ == "__main__":
