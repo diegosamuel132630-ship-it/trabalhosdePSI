@@ -1,80 +1,81 @@
-# =========================
-# SISTEMA DE SOLDADOS
-# =========================
-def criar_soldado():
-    print("\n--- Criar Soldado ---")
+from utils import validar_nome, validar_idade, validar_texto, paises
 
-    numero = input("Número militar: ").strip()
+soldados = []
+next_soldado_id = 1
 
-    if numero in numeros_militares:
-        print("❌ Já existe!")
-        return
 
-    nome = input("Nome: ").strip()
+def criar_soldado(nome, idade, patente, pais):
+    global next_soldado_id
 
-    try:
-        idade = int(input("Idade: "))
-    except:
-        print("❌ Idade inválida!")
-        return
+    if not validar_nome(nome):
+        return 400, "Nome inválido"
 
-    patente = input("Patente: ").strip()
+    if not validar_idade(idade):
+        return 400, "Idade inválida"
 
-    # validar país em loop
-    while True:
-        print("Países disponíveis:", list(paises.keys()))
-        pais = input("País: ").strip()
+    if not validar_texto(patente):
+        return 400, "Patente inválida"
 
-        if pais in paises:
-            break
-        else:
-            print("❌ País inválido! Tenta novamente.")
-
-    forca = random.randint(50, 100)
+    if pais not in paises:
+        return 404, "País inválido"
 
     soldado = {
-        "numero": numero,
-        "dados": [nome, idade],
-        "patente": patente,
-        "forca": forca,
+        "id": next_soldado_id,
+        "nome": nome.strip(),
+        "idade": idade,
+        "patente": patente.strip(),
         "pais": pais
     }
 
+    next_soldado_id += 1
     soldados.append(soldado)
     paises[pais]["soldados"].append(soldado)
-    numeros_militares.add(numero)
 
-    guardar_dados()
-    print(f"✅ Soldado criado com força {forca}!")
+    return 201, soldado
 
 
 def listar_soldados():
+    return 200, soldados
+
+
+def buscar_soldado_por_id(soldado_id):
     for s in soldados:
-        nome, idade = s["dados"]
-        print(f"{s['numero']} - {nome} ({idade}) - {s['patente']} - Força:{s['forca']} - {s['pais']}")
+        if s["id"] == soldado_id:
+            return 200, s
+    return 404, "Soldado não encontrado"
 
 
-def editar_soldado():
-    numero = input("Número: ")
+def editar_soldado(soldado_id, nome=None, idade=None, patente=None):
     for s in soldados:
-        if s["numero"] == numero:
-            s["dados"][0] = input("Novo nome: ")
-            s["dados"][1] = int(input("Nova idade: "))
-            s["patente"] = input("Nova patente: ")
-            guardar_dados()
-            print("✅ Editado!")
-            return
-    print("❌ Não encontrado!")
+        if s["id"] == soldado_id:
+
+            if nome is not None:
+                if not validar_nome(nome):
+                    return 400, "Nome inválido"
+                s["nome"] = nome.strip()
+
+            if idade is not None:
+                if not validar_idade(idade):
+                    return 400, "Idade inválida"
+                s["idade"] = idade
+
+            if patente is not None:
+                if not validar_texto(patente):
+                    return 400, "Patente inválida"
+                s["patente"] = patente.strip()
+
+            return 200, s
+
+    return 404, "Soldado não encontrado"
 
 
-def apagar_soldado():
-    numero = input("Número: ")
-    for s in soldados:
-        if s["numero"] == numero:
-            soldados.remove(s)
+def apagar_soldado(soldado_id):
+    for i, s in enumerate(soldados):
+        if s["id"] == soldado_id:
+
             paises[s["pais"]]["soldados"].remove(s)
-            numeros_militares.remove(numero)
-            guardar_dados()
-            print("🗑️ Apagado!")
-            return
-    print("❌ Não encontrado!")
+            del soldados[i]
+
+            return 200, soldado_id
+
+    return 404, "Soldado não encontrado"
