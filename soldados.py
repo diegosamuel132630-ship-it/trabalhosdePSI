@@ -27,9 +27,10 @@ def criar_soldado(nome, idade, patente, pais):
         "pais": pais
     }
 
-    next_soldado_id += 1
     soldados.append(soldado)
     paises[pais]["soldados"].append(soldado)
+
+    next_soldado_id += 1
 
     return 201, soldado
 
@@ -73,9 +74,10 @@ def apagar_soldado(soldado_id):
     for i, s in enumerate(soldados):
         if s["id"] == soldado_id:
 
-            paises[s["pais"]]["soldados"].remove(s)
-            del soldados[i]
+            if s in paises[s["pais"]]["soldados"]:
+                paises[s["pais"]]["soldados"].remove(s)
 
-            return 200, soldado_id
+            del soldados[i]
+            return 200, "Soldado removido"
 
     return 404, "Soldado não encontrado"
