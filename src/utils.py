@@ -19,22 +19,21 @@ paises = {
 }
 
 
-def input_int(mensagem):
+def input_int(msg):
     while True:
-        valor = input(mensagem)
         try:
-            return int(valor)
-        except:
-            print("Digite um número válido!")
+            return int(input(msg))
+        except ValueError:
+            print("Número inválido!")
 
 
-def validar_nome(nome):
-    return isinstance(nome, str) and nome.strip() != ""
+def validar_nome(n):
+    return isinstance(n, str) and n.strip() != ""
 
 
-def validar_idade(idade):
-    return isinstance(idade, int) and idade > 0
+def validar_idade(i):
+    return isinstance(i, int) and i > 0
 
 
-def validar_texto(texto):
-    return isinstance(texto, str) and texto.strip() != ""
+def validar_texto(t):
+    return isinstance(t, str) and t.strip() != ""

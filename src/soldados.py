@@ -1,83 +1,98 @@
 from utils import validar_nome, validar_idade, validar_texto, paises
 
 soldados = []
-next_soldado_id = 1
+next_id = 1
 
+
+# =========================
+# LÓGICA
+# =========================
 
 def criar_soldado(nome, idade, patente, pais):
-    global next_soldado_id
+    global next_id
 
     if not validar_nome(nome):
         return 400, "Nome inválido"
-
     if not validar_idade(idade):
         return 400, "Idade inválida"
-
     if not validar_texto(patente):
         return 400, "Patente inválida"
-
     if pais not in paises:
         return 404, "País inválido"
 
-    soldado = {
-        "id": next_soldado_id,
+    s = {
+        "id": next_id,
         "nome": nome.strip(),
         "idade": idade,
         "patente": patente.strip(),
         "pais": pais
     }
 
-    soldados.append(soldado)
-    paises[pais]["soldados"].append(soldado)
+    soldados.append(s)
+    paises[pais]["soldados"].append(s)
 
-    next_soldado_id += 1
-
-    return 201, soldado
+    next_id += 1
+    return 201, s
 
 
 def listar_soldados():
-    return 200, soldados
+    return 200, list(soldados)
 
 
-def buscar_soldado_por_id(soldado_id):
+def buscar(id_):
     for s in soldados:
-        if s["id"] == soldado_id:
+        if s["id"] == id_:
             return 200, s
-    return 404, "Soldado não encontrado"
+    return 404, "Não encontrado"
 
 
-def editar_soldado(soldado_id, nome=None, idade=None, patente=None):
-    for s in soldados:
-        if s["id"] == soldado_id:
+def apagar(id_):
+    code, s = buscar(id_)
+    if code != 200:
+        return 404, "Não encontrado"
 
-            if nome is not None:
-                if not validar_nome(nome):
-                    return 400, "Nome inválido"
-                s["nome"] = nome.strip()
+    paises[s["pais"]]["soldados"].remove(s)
+    soldados.remove(s)
 
-            if idade is not None:
-                if not validar_idade(idade):
-                    return 400, "Idade inválida"
-                s["idade"] = idade
-
-            if patente is not None:
-                if not validar_texto(patente):
-                    return 400, "Patente inválida"
-                s["patente"] = patente.strip()
-
-            return 200, s
-
-    return 404, "Soldado não encontrado"
+    return 200, "Removido"
 
 
-def apagar_soldado(soldado_id):
-    for i, s in enumerate(soldados):
-        if s["id"] == soldado_id:
+# =========================
+# MENU
+# =========================
 
-            if s in paises[s["pais"]]["soldados"]:
-                paises[s["pais"]]["soldados"].remove(s)
+def menu_soldados():
+    while True:
+        print("\n=== SOLDADOS ===")
+        print("1. Criar soldado")
+        print("2. Listar soldados")
+        print("3. Buscar soldado")
+        print("4. Apagar soldado")
+        print("0. Voltar")
 
-            del soldados[i]
-            return 200, "Soldado removido"
+        op = input("Escolha: ")
 
-    return 404, "Soldado não encontrado"
+        if op == "0":
+            break
+
+        elif op == "1":
+            nome = input("Nome: ")
+            idade = int(input("Idade: "))
+            patente = input("Patente: ")
+            pais = input("País: ")
+
+            print(*criar_soldado(nome, idade, patente, pais))
+
+        elif op == "2":
+            print(*listar_soldados())
+
+        elif op == "3":
+            id_ = int(input("ID: "))
+            print(*buscar(id_))
+
+        elif op == "4":
+            id_ = int(input("ID: "))
+            print(*apagar(id_))
+
+        else:
+            print("Opção inválida")
