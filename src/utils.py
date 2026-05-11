@@ -23,6 +23,7 @@ def input_int(msg):
     while True:
         try:
             return int(input(msg))
+            return n
         except ValueError:
             print("Número inválido!")
 
