@@ -1,52 +1,43 @@
-paises_data = {}
+paises = []
 next_id = 1
 
 
-def criar(nome, hino, infra, bandeira, recursos):
+def criar(nome):
     global next_id
 
-    p = {
-        "id": next_id,
-        "nome": nome,
-        "hino": hino,
-        "infraestrutura": infra,
-        "bandeira": bandeira,
-        "recursos": recursos
-    }
+    p = {"id": next_id, "nome": nome}
+    paises.append(p)
 
-    paises_data[next_id] = p
     next_id += 1
-
     return 201, p
 
 
 def listar():
-    return 200, list(paises_data.values())
+    if not paises:
+        return 404, "Sem países"
+    return 200, paises
 
 
-def menu_pais():
-    while True:
-        print("\n=== PAÍS ===")
-        print("1. Criar")
-        print("2. Listar")
-        print("0. Voltar")
+def buscar(id_):
+    for p in paises:
+        if p["id"] == id_:
+            return 200, p
+    return 404, "Não encontrado"
 
-        op = input("Escolha: ")
 
-        if op == "0":
-            break
+def atualizar(id_, nome):
+    for p in paises:
+        if p["id"] == id_:
+            p["nome"] = nome
+            return 200, p
 
-        elif op == "1":
-            print(*criar(
-                input("Nome: "),
-                input("Hino: "),
-                input("Infra: "),
-                input("Bandeira: "),
-                input("Recursos: ")
-            ))
+    return 404, "Não encontrado"
 
-        elif op == "2":
-            print(*listar())
 
-        else:
-            print("Inválido")
+def apagar(id_):
+    for p in paises:
+        if p["id"] == id_:
+            paises.remove(p)
+            return 200, p
+
+    return 404, "Não encontrado"
