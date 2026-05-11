@@ -21,6 +21,7 @@ def menu_soldados():
         op = input("Op: ")
 
         if op == "0":
+            print("A sair do sistema...")
             break
         elif op == "1":
             mostrar(*c_sold(input("Nome: "), int(input("Idade: ")), input("Patente: "), input("País: ")))
