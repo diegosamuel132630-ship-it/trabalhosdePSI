@@ -23,6 +23,7 @@ def input_int(msg):
     while True:
         try:
             return int(input(msg))
+            return n
         except ValueError:
             print("Número inválido!")
 
@@ -37,3 +38,6 @@ def validar_idade(i):
 
 def validar_texto(t):
     return isinstance(t, str) and t.strip() != ""
+
+def pais_existe(p):
+    return p in paises

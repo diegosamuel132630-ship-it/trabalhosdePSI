@@ -15,36 +15,40 @@ def criar(presidente, ministro, nome, pais):
 
     governos.append(g)
     next_id += 1
-
     return 201, g
 
 
 def listar():
+    if not governos:
+        return 404, "Sem governos"
     return 200, governos
 
 
-def menu_governo():
-    while True:
-        print("\n=== GOVERNO ===")
-        print("1. Criar")
-        print("2. Listar")
-        print("0. Voltar")
+def buscar(id_):
+    for g in governos:
+        if g["id"] == id_:
+            return 200, g
+    return 404, "Não encontrado"
 
-        op = input("Escolha: ")
 
-        if op == "0":
-            break
+def atualizar(id_, presidente, ministro, nome, pais):
+    for g in governos:
+        if g["id"] == id_:
+            g.update({
+                "presidente": presidente,
+                "ministro": ministro,
+                "nome": nome,
+                "pais": pais
+            })
+            return 200, g
 
-        elif op == "1":
-            print(*criar(
-                input("Presidente: "),
-                input("Ministro: "),
-                input("Nome: "),
-                input("País: ")
-            ))
+    return 404, "Não encontrado"
 
-        elif op == "2":
-            print(*listar())
 
-        else:
-            print("Inválido")
+def apagar(id_):
+    for g in governos:
+        if g["id"] == id_:
+            governos.remove(g)
+            return 200, g
+
+    return 404, "Não encontrado"

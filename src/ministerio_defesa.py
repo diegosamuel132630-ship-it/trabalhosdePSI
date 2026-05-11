@@ -1,63 +1,58 @@
-from soldados import *
-from utils import input_int, paises
+from soldados import soldados
+
 
 missoes = []
-next_missao = 1
+next_id = 1
 
 
-def relatorio():
-    return 200, {
-        "total": len(soldados),
-        "por_pais": {p: len(d["soldados"]) for p, d in paises.items()}
-    }
-
-
-def criar_missao(nome, pais, ids):
-    global next_missao
+def criar(nome, pais, ids_soldados):
+    global next_id
 
     missao = {
-        "id": next_missao,
+        "id": next_id,
         "nome": nome,
         "pais": pais,
-        "soldados": ids
+        "soldados": ids_soldados
     }
 
     missoes.append(missao)
-    next_missao += 1
-
+    next_id += 1
     return 201, missao
 
 
-def listar_missoes():
+def listar():
+    if not missoes:
+        return 404, "Sem missões"
     return 200, missoes
 
 
-# MENU DENTRO DO FICHEIRO
-def menu_ministerio():
-    while True:
-        print("\n=== MINISTÉRIO ===")
-        print("1. Relatório")
-        print("2. Criar missão")
-        print("3. Listar missões")
-        print("0. Voltar")
+def buscar(id_):
+    for m in missoes:
+        if m["id"] == id_:
+            return 200, m
+    return 404, "Não encontrado"
 
-        op = input("Escolha: ")
 
-        if op == "0":
-            break
+def atualizar(id_, nome, pais, ids_soldados):
+    for m in missoes:
+        if m["id"] == id_:
+            m.update({
+                "nome": nome,
+                "pais": pais,
+                "soldados": ids_soldados
+            })
+            return 200, m
 
-        elif op == "1":
-            print(*relatorio())
+    return 404, "Não encontrado"
 
-        elif op == "2":
-            nome = input("Nome missão: ")
-            pais = input("País: ")
-            ids = list(map(int, input("IDs: ").split(",")))
 
-            print(*criar_missao(nome, pais, ids))
+def apagar(id_):
+    for m in missoes:
+        if m["id"] == id_:
+            missoes.remove(m)
+            return 200, m
 
-        elif op == "3":
-            print(*listar_missoes())
+    return 404, "Não encontrado"
 
-        else:
-            print("Inválido")
+
+# ❌ REMOVIDO: relatorio() (não faz parte do CRUD)
