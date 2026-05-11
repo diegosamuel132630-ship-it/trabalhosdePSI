@@ -15,36 +15,40 @@ def criar(nome, valor, resp, pais):
 
     estruturas.append(e)
     next_id += 1
-
     return 201, e
 
 
 def listar():
+    if not estruturas:
+        return 404, "Sem estruturas"
     return 200, estruturas
 
 
-def menu_estrutura():
-    while True:
-        print("\n=== ESTRUTURA MILITAR ===")
-        print("1. Criar")
-        print("2. Listar")
-        print("0. Voltar")
+def buscar(id_):
+    for e in estruturas:
+        if e["id"] == id_:
+            return 200, e
+    return 404, "Não encontrado"
 
-        op = input("Escolha: ")
 
-        if op == "0":
-            break
+def atualizar(id_, nome, valor, resp, pais):
+    for e in estruturas:
+        if e["id"] == id_:
+            e.update({
+                "nome": nome,
+                "valor": valor,
+                "responsavel": resp,
+                "pais": pais
+            })
+            return 200, e
 
-        elif op == "1":
-            print(*criar(
-                input("Nome: "),
-                input("Valor: "),
-                input("Responsável: "),
-                input("País: ")
-            ))
+    return 404, "Não encontrado"
 
-        elif op == "2":
-            print(*listar())
 
-        else:
-            print("Inválido")
+def apagar(id_):
+    for e in estruturas:
+        if e["id"] == id_:
+            estruturas.remove(e)
+            return 200, e
+
+    return 404, "Não encontrado"
