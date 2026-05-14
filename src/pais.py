@@ -1,54 +1,12 @@
+import json
+
 paises = []
 next_id = 1
 
 
-def criar(nome):
-    global next_id
-
-    p = {"id": next_id, "nome": nome}
-    paises.append(p)
-
-    next_id += 1
-    return 201, p
-
-
-def listar():
-    if not paises:
-        return 404, "Sem países"
-    return 200, paises
-
-
-def buscar(id_):
-    for p in paises:
-        if p["id"] == id_:
-            return 200, p
-    return 404, "Não encontrado"
-
-
-def atualizar(id_, nome):
-    for p in paises:
-        if p["id"] == id_:
-            p["nome"] = nome
-            return 200, p
-
-    return 404, "Não encontrado"
-
-
-def apagar(id_):
-    for p in paises:
-        if p["id"] == id_:
-            paises.remove(p)
-            return 200, p
-
-    return 404, "Não encontrado"
-
-
 # =========================
-#  PERSISTÊNCIA (ADICIONADO)
+# PERSISTÊNCIA
 # =========================
-
-import json
-
 
 def guardar_dados(nome_ficheiro="paises.json"):
     try:
@@ -81,3 +39,70 @@ def carregar_dados(nome_ficheiro="paises.json"):
 
     except Exception as e:
         return 500, str(e)
+
+def criar(nome):
+    global next_id
+
+    carregar_dados()
+
+    p = {
+        "id": next_id,
+        "nome": nome
+    }
+
+    paises.append(p)
+
+    next_id += 1
+
+    guardar_dados()
+
+    return 201, p
+
+
+def listar():
+    carregar_dados()
+
+    if not paises:
+        return 404, "Sem países"
+
+    return 200, paises
+
+
+def buscar(id_):
+    carregar_dados()
+
+    for p in paises:
+        if p["id"] == id_:
+            return 200, p
+
+    return 404, "Não encontrado"
+
+
+def atualizar(id_, nome):
+    carregar_dados()
+
+    for p in paises:
+        if p["id"] == id_:
+
+            p["nome"] = nome
+
+            guardar_dados()
+
+            return 200, p
+
+    return 404, "Não encontrado"
+
+
+def apagar(id_):
+    carregar_dados()
+
+    for p in paises:
+        if p["id"] == id_:
+
+            paises.remove(p)
+
+            guardar_dados()
+
+            return 200, p
+
+    return 404, "Não encontrado"
